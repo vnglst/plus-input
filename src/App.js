@@ -8,7 +8,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <Plus maxPlus={5} idPrefix="Phone-">
-            <input id="Phone" />
+            <input />
           </Plus>
         </header>
       </div>

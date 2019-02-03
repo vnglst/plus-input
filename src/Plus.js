@@ -1,34 +1,36 @@
 import React, { Fragment, useState } from 'react'
 
 export default function Plus({ maxPlus, idPrefix, children }) {
-  const [elementKeys, setElementKeys] = useState([])
+  // every 'plussed' component, get a number as key
+  const [keys, setKeys] = useState([0])
 
-  const element = React.Children.only(children)
+  // only 1 component can be 'plussed'
+  const comp = React.Children.only(children)
 
-  const clone = (key, onRemove) => {
+  const add = () => {
+    const nextKey = keys[keys.length - 1] + 1
+    setKeys([...keys, nextKey])
+  }
+
+  const remove = keyToRemove => {
+    setKeys(keys.filter(key => key !== keyToRemove))
+  }
+
+  const clone = key => {
     return (
       <span key={key}>
-        {React.cloneElement(element, { id: `${idPrefix}${key}` })}
-        <button onClick={() => onRemove(key)}>x</button>
+        {React.cloneElement(comp, { id: `${idPrefix}${key}` })}
+        {/* first component cannot be removed */}
+        {key !== 0 && <button onClick={() => remove(key)}>x</button>}
       </span>
     )
   }
 
-  const remove = keyToRemove => {
-    setElementKeys(elementKeys.filter(key => key !== keyToRemove))
-  }
-
-  const add = () => {
-    const nextKey =
-      elementKeys.length === 0 ? 1 : elementKeys[elementKeys.length - 1] + 1
-    setElementKeys([...elementKeys, nextKey])
-  }
-
   return (
     <Fragment>
-      {element}
-      {elementKeys.map(key => clone(key, remove))}
-      {elementKeys.length < maxPlus ? <button onClick={add}>+</button> : null}
+      {keys.map(key => clone(key))}
+      {/* don't show Plus button when maximum is reached */}
+      {keys.length < maxPlus && <button onClick={add}>+</button>}
     </Fragment>
   )
 }
