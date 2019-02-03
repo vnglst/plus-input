@@ -1,16 +1,33 @@
-import React, { useState } from 'react'
+import React, { useState, Fragment } from 'react'
 import PlusInput from './PlusInput'
 import './App.css'
 
-function App() {
-  // some values already filled, e.g. from backend
-  const [values, setValues] = useState({
-    Phone: '0681824931',
-    'Phone-2': '06123456789'
-  })
+function Phone({ onChange, id, value }) {
+  return (
+    <Fragment>
+      {/* TODO: id's are currently index numbers */}
+      <label htmlFor={id}>Phone {id}:</label>
+      <input id={id} value={value} type="tel" onChange={onChange} />
+    </Fragment>
+  )
+}
 
-  const updateValue = (id, value) => {
-    setValues({ ...values, [id]: value })
+function App() {
+  // some numbers already filled, e.g. from backend
+  const [phoneNumbers, setPhoneNumbers] = useState([
+    '0681824931',
+    '06123456789'
+  ])
+
+  const updatePhoneNumber = (index, updatedNumber) => {
+    console.log(index, updatedNumber)
+    setPhoneNumbers(
+      phoneNumbers.map((old, i) => (index === i ? updatedNumber : old))
+    )
+  }
+
+  const addPhoneNumber = newNumber => {
+    setPhoneNumbers([...phoneNumbers, newNumber])
   }
 
   return (
@@ -19,12 +36,14 @@ function App() {
         className="App-header"
         onSubmit={e => {
           e.preventDefault()
-          console.log('submitting', values)
+          console.log('submitting', phoneNumbers)
         }}
       >
-        <PlusInput maxPlus={5} values={values}>
-          <input id="Phone" type="phone" onChange={updateValue} />
+        {/* ---implementation--- */}
+        <PlusInput maxPlus={5} values={phoneNumbers} onAdd={addPhoneNumber}>
+          <Phone id="Phone" onChange={updatePhoneNumber} />
         </PlusInput>
+        {/* ---implementation--- */}
         <input type="submit" value="Submit" />
       </form>
     </div>
